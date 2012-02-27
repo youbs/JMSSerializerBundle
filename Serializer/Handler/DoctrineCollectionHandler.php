@@ -34,8 +34,8 @@ class DoctrineCollectionHandler implements SerializationHandlerInterface
 
             // Dirty workaround to get data without cursor
             $arrayData = array();
-            foreach($data as $key => $val) {
-                $arrayData[$key] = $val;
+            foreach($data as $val) {
+                $arrayData[] = $val;
             }
 
             return $navigator->accept($arrayData, 'array', $visitor);
