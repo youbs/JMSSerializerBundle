@@ -98,6 +98,10 @@ class XmlDriver extends AbstractFileDriver
                         $pMetadata->type = (string) $pElem->type;
                     }
 
+                    if (null !== $groups = $pElem->attributes()->groups) {
+                        $pMetadata->groups =  preg_split('/\s*,\s*/', (string) $groups);
+                    } 
+
                     if (isset($pElem->{'xml-list'})) {
                         $pMetadata->xmlCollection = true;
 
@@ -146,6 +150,10 @@ class XmlDriver extends AbstractFileDriver
 
                     if (null !== $inline = $pElem->attributes()->inline) {
                         $pMetadata->inline = 'true' === strtolower($inline);
+                    }
+
+                    if (null !== $readOnly = $pElem->attributes()->{'read-only'}) {
+                        $pMetadata->readOnly = 'true' === strtolower($readOnly);
                     }
                 }
 

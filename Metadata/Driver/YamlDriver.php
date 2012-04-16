@@ -86,6 +86,9 @@ class YamlDriver extends AbstractFileDriver
                     if (isset($pConfig['type'])) {
                         $pMetadata->type = (string) $pConfig['type'];
                     }
+                    if (isset($pConfig['groups'])) {
+                        $pMetadata->groups = $pConfig['groups'];
+                    } 
 
                     if (isset($pConfig['xml_list'])) {
                         $pMetadata->xmlCollection = true;
@@ -133,6 +136,10 @@ class YamlDriver extends AbstractFileDriver
                     if (isset($pConfig['inline'])) {
                         $pMetadata->inline = (Boolean) $pConfig['inline'];
                     }
+
+                    if (isset($pConfig['read_only'])) {
+                        $pMetadata->readOnly = (Boolean) $pConfig['read_only'];
+                    }
                 }
                 if ((ExclusionPolicy::NONE === $exclusionPolicy && !$isExclude)
                 || (ExclusionPolicy::ALL === $exclusionPolicy && $isExpose)) {
@@ -174,7 +181,7 @@ class YamlDriver extends AbstractFileDriver
         $methods = array();
         foreach ($config as $name) {
             if (!$class->hasMethod($name)) {
-                throw new RuntimeException(sprintf('The method %s does not exist in class %s.', $mName, $name));
+                throw new RuntimeException(sprintf('The method %s does not exist in class %s.', $name, $class->getName()));
             }
 
             $methods[] = new MethodMetadata($class->getName(), $name);

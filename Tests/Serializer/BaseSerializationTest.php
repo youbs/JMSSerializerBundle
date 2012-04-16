@@ -52,10 +52,12 @@ use JMS\SerializerBundle\Serializer\Handler\ConstraintViolationHandler;
 use JMS\SerializerBundle\Serializer\Handler\DoctrineProxyHandler;
 use JMS\SerializerBundle\Tests\Fixtures\Comment;
 use JMS\SerializerBundle\Tests\Fixtures\Author;
+use JMS\SerializerBundle\Tests\Fixtures\AuthorReadOnly;
 use JMS\SerializerBundle\Tests\Fixtures\BlogPost;
 use JMS\SerializerBundle\Tests\Fixtures\ObjectWithLifecycleCallbacks;
 use JMS\SerializerBundle\Tests\Fixtures\CircularReferenceParent;
 use JMS\SerializerBundle\Tests\Fixtures\InlineParent;
+use JMS\SerializerBundle\Tests\Fixtures\GroupsObject;
 use JMS\SerializerBundle\Serializer\XmlSerializationVisitor;
 use Doctrine\Common\Annotations\AnnotationReader;
 use JMS\SerializerBundle\Metadata\Driver\AnnotationDriver;
@@ -195,6 +197,18 @@ abstract class BaseSerializationTest extends \PHPUnit_Framework_TestCase
             $this->assertAttributeSame(false, 'published', $deserialized);
             $this->assertAttributeEquals(new ArrayCollection(array($comment)), 'comments', $deserialized);
             $this->assertAttributeEquals($author, 'author', $deserialized);
+        }
+    }
+
+    public function testReadOnly()
+    {
+        $author = new AuthorReadOnly(123, 'Ruud Kamphuis');
+        $this->assertEquals($this->getContent('readonly'), $this->serialize($author));
+
+        if ($this->hasDeserializer()) {
+            $deserialized = $this->deserialize($this->getContent('readonly'), get_class($author));
+            $this->assertNull($this->getField($deserialized, 'id'));
+            $this->assertEquals('Ruud Kamphuis', $this->getField($deserialized, 'name'));
         }
     }
 
@@ -402,6 +416,27 @@ abstract class BaseSerializationTest extends \PHPUnit_Framework_TestCase
     {
         $this->assertEquals($this->getContent('accessor_order_child'), $this->serialize(new AccessorOrderChild()));
         $this->assertEquals($this->getContent('accessor_order_parent'), $this->serialize(new AccessorOrderParent()));
+    }
+    
+    public function testGroups()
+    {
+        $serializer =  $this->getSerializer();
+
+        $groupsObject = new GroupsObject();
+        
+        $this->assertEquals($this->getContent('groups_all'), $serializer->serialize($groupsObject, $this->getFormat()));
+
+        $serializer->setGroups(array("foo"));
+        $this->assertEquals($this->getContent('groups_foo'), $serializer->serialize($groupsObject, $this->getFormat()));
+        
+        $serializer->setGroups(array("foo", "bar"));
+        $this->assertEquals($this->getContent('groups_foobar'), $serializer->serialize($groupsObject, $this->getFormat()));
+         
+        $serializer->setGroups(null);
+        $this->assertEquals($this->getContent('groups_all'), $serializer->serialize($groupsObject, $this->getFormat()));
+
+        $serializer->setGroups(array());
+        $this->assertEquals($this->getContent('groups_all'), $serializer->serialize($groupsObject, $this->getFormat()));
     }
 
     abstract protected function getContent($key);

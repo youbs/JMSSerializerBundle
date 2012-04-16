@@ -27,6 +27,7 @@ class PropertyMetadata extends BasePropertyMetadata
 
     public $sinceVersion;
     public $untilVersion;
+    public $groups;
     public $serializedName;
     public $type;
     public $xmlCollection = false;
@@ -38,6 +39,7 @@ class PropertyMetadata extends BasePropertyMetadata
     public $getter;
     public $setter;
     public $inline = false;
+    public $readOnly = false;
 
     public function setAccessor($type, $getter = null, $setter = null)
     {
@@ -72,6 +74,7 @@ class PropertyMetadata extends BasePropertyMetadata
         return serialize(array(
             $this->sinceVersion,
             $this->untilVersion,
+            $this->groups,
             $this->serializedName,
             $this->type,
             $this->xmlCollection,
@@ -83,6 +86,7 @@ class PropertyMetadata extends BasePropertyMetadata
             $this->getter,
             $this->setter,
             $this->inline,
+            $this->readOnly,
             parent::serialize(),
         ));
     }
@@ -92,6 +96,7 @@ class PropertyMetadata extends BasePropertyMetadata
         list(
             $this->sinceVersion,
             $this->untilVersion,
+            $this->groups,
             $this->serializedName,
             $this->type,
             $this->xmlCollection,
@@ -103,6 +108,7 @@ class PropertyMetadata extends BasePropertyMetadata
             $this->getter,
             $this->setter,
             $this->inline,
+            $this->readOnly,
             $parentStr
         ) = unserialize($str);
 

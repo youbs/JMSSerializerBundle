@@ -20,8 +20,6 @@ namespace JMS\SerializerBundle\Metadata\Driver;
 
 use JMS\SerializerBundle\Annotation\AccessorOrder;
 
-use JMS\SerializerBundle\Annotation\Groups;
-
 use JMS\SerializerBundle\Annotation\Accessor;
 
 use JMS\SerializerBundle\Annotation\AccessType;
@@ -38,12 +36,14 @@ use Metadata\MethodMetadata;
 use Doctrine\Common\Annotations\Reader;
 use JMS\SerializerBundle\Annotation\Type;
 use JMS\SerializerBundle\Annotation\Exclude;
+use JMS\SerializerBundle\Annotation\Groups;
 use JMS\SerializerBundle\Annotation\Expose;
 use JMS\SerializerBundle\Annotation\SerializedName;
 use JMS\SerializerBundle\Annotation\Until;
 use JMS\SerializerBundle\Annotation\Since;
 use JMS\SerializerBundle\Annotation\ExclusionPolicy;
 use JMS\SerializerBundle\Annotation\Inline;
+use JMS\SerializerBundle\Annotation\ReadOnly;
 use JMS\SerializerBundle\Metadata\ClassMetadata;
 use JMS\SerializerBundle\Metadata\PropertyMetadata;
 use Metadata\Driver\DriverInterface;
@@ -120,9 +120,11 @@ class AnnotationDriver implements DriverInterface
                     } else if ($annot instanceof Accessor) {
                         $accessor = array($annot->getter, $annot->setter);
                     } else if ($annot instanceof Groups) {
-                        $propertyMetadata->setGroups($annot->names);
+                        $propertyMetadata->groups = $annot->groups;
                     } else if ($annot instanceof Inline) {
                         $propertyMetadata->inline = true;
+                    } else if ($annot instanceof ReadOnly) {
+                        $propertyMetadata->readOnly = true;
                     }
                 }
 
